@@ -1,0 +1,14 @@
+<html>
+    <body>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" />
+
+            <select name="classifier">
+                {% for classifier in classifiers %}
+                    <option value="{{ classifier }}">{{ classifier }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit"/>
+        </form>
+    </body>
+</html>
