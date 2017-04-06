@@ -1,14 +1,125 @@
-<html>
-    <body>
-        <form action="/upload" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" />
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-            <select name="classifier">
-                {% for classifier in classifiers %}
-                    <option value="{{ classifier }}">{{ classifier }}</option>
-                {% endfor %}
-            </select>
-            <input type="submit"/>
-        </form>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style type="text/css" media="all">
+            .btn-file {
+                position: relative;
+                overflow: hidden;
+            }
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                outline: none;
+                background: white;
+                cursor: inherit;
+                display: block;
+            }
+
+            .row {
+                padding-top: 40px;
+            }
+        </style>
+    </head>
+    <body style="text-align: center;">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <p>This is a demo of the broken car window classifier developed by <a target="_blank" href="https://tecknoworks.com">Tecknoworks</a>.</p>
+                    <p>Choose a JPG file and click upload. The image will be classified as either broken or intact.</p>
+                </div>
+            </div>
+            <div class="row">
+                <form id="upload-file" method="post" enctype="multipart/form-data">
+                    <label class="btn btn-default btn-file">
+                        <span id="fileName">Choose File</span><input name="file" type="file" style="display: none;">
+                    </label>
+                    <!-- <input name="file" type="file"> -->
+                    <select name="classifier" style="display: none;">
+                        {% for classifier in classifiers %}
+                        <option value="{{ classifier }}">{{ classifier }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-default" id="upload-file-btn" type="button">Upload</button>
+                </form>
+            </div>
+            <div class="row" id="loader" style="display: none">
+                <img src="/ajax-loader.gif">
+            </div>
+            <div class="row" id="console">
+                <div id="output"></div>
+                <img id="imagePreview" src="" style="display: none; width: 500px">
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(function() {
+                $(document).on('change', ':file', function() {
+                    var input = $(this),
+                        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                        label = input.val().replace(/form_data/g, '/').replace(/.*\//, '');
+                    input.trigger('fileselect', [numFiles, label]);
+                });
+
+                $(':file').on('fileselect', function(event, numFiles, label) {
+                    var labelArray = label.split('\\');
+                    var newText = labelArray[labelArray.length - 1];
+                    $('#fileName').text(newText);
+                    if (newText.endsWith("jpg") || newText.endsWith("jpeg")) {
+                        $('button').prop('disabled', false);
+                    } else {
+                        if (label == "") {
+                            $('#fileName').text('Choose File');
+                        } else {
+                            $('#output').text('Only jpg/jpeg images allowed for now.');
+                        }
+                        $('button').prop('disabled', true);
+                        $('#imagePreview').hide()
+                    }
+                });
+
+                $('#upload-file-btn').click(function() {
+                    $('#loader').show();
+                    $('#output').text('');
+                    $('button').prop('disabled', true);
+                    var form_data = new FormData($('#upload-file')[0]);
+                    $.ajax({
+                        type: 'POST',
+                        url: '/upload',
+                        data: form_data,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(data) {
+                            $('#loader').hide();
+                            $('#imagePreview').attr("src", data.url);
+                            $('#imagePreview').show()
+                            $('button').prop('disabled', false);
+                            if (data.broken > data.intact) {
+                                $("#output").text("broken (" + (data.broken * 100).toFixed(2) + "% confidence)");
+                            } else {
+                                $("#output").text("intact(" + (data.intact * 100).toFixed(2) + "% confidence)");
+                            }
+                        },
+                        error: function (data) {
+                            $('#loader').hide();
+                            $('button').prop('disabled', false);
+                            $("#output").text("An error occured. The incident has been recorded.");
+                            console.error(data);
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
