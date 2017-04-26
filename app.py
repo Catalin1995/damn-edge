@@ -11,9 +11,14 @@ app = Flask(__name__, static_folder="static")
 def static_file(path):
     return app.send_static_file(path)
 
+@app.route('/classifiers')
+def get_classifisers():
+    return jsonify({"classifiers": recognition.classifier_list()})
+
 @app.route('/')
 def home():
-    return render_template('upload.html', classifiers = recognition.classifier_list())
+    return render_template('upload.html')
+#    return render_template('upload.html', classifiers = recognition.classifier_list())
 
 @app.route('/upload', methods = ['POST'])
 def upload_file():

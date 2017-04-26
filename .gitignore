@@ -19,4 +19,5 @@ htmlcov
 *,cover
 
 venv/
-static/uploads/*
+static/bower_components/*
+!static/bower_components/.keep
