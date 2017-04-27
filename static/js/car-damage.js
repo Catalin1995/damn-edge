@@ -1,6 +1,6 @@
-var scotchApp = angular.module('scotchApp', ['ngFileUpload', 'ui.bootstrap']);
+var carDamageApp = angular.module('carDamageApp', ['ngFileUpload', 'ui.bootstrap']);
 
-scotchApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', function($scope, $http, Upload, $sce) {
+carDamageApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', function($scope, $http, Upload, $sce) {
     $scope.classifiers = [];
     $scope.files = [];
     $scope.loading = false;
@@ -68,28 +68,29 @@ scotchApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', fun
     }
 
     function doRequest(i) {
-        var data = new FormData();
-        data.append('classifier', $scope.files[i].classifier);
-        data.append('file', $scope.files[i]);
+        var test = new FormData();
+        test.append('classifier', $scope.files[i].classifier);
+        test.append('file', $scope.files[i]);
 
-        $.ajax({
-            url: "/upload",
-            data: data,
-            cache: false,
-            contentType: false,
-            processData: false,
-            type: "POST"
-        }).done(function(data) {
-            console.log(data);
-            $scope.$apply(function() {
-                $scope.files[i]['result'] = data;
+        var config = {
+            headers: { 'Content-Type': undefined }
+        }
+
+        $http.post('/upload', test, config).then(
+            function successCallback(response) {
+                console.log(response);
+                $scope.files[i]['result'] = response.data;
                 $scope.files[i].loading = false;
-            });
-            i = i + 1;
-            if (i < $scope.files.length) {
-                doRequest(i);
+                i = i + 1;
+                if (i < $scope.files.length) {
+                    doRequest(i);
+                }
+            },
+            function errorCallback(error) {
+                console.log("POST request error!");
+                console.log(error);
             }
-        });
+        );
     }
 
     function startLoadingItems() {
@@ -112,5 +113,4 @@ scotchApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', fun
         var index = $scope.files.indexOf(file);
         $scope.files.splice(index, 1);
     }
-
 }]);

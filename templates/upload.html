@@ -1,13 +1,15 @@
-<html ng-app="scotchApp">
+<html ng-app="carDamageApp">
 
 <head>
     <link rel='stylesheet' href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.css') }}">
-    <link rel='stylesheet' href="{{ url_for('static', filename='car-damage.css') }}">
+    <link rel='stylesheet' href="{{ url_for('static', filename='css/car-damage.css') }}">
 </head>
 
-<body ng-controller="mainController">
-    <div class="container" style="margin-top: 100px">
-        <input type="file" ngf-select="onFileSelect($files)" multiple>
+<body popover-close>
+    <div ng-controller="mainController" class="container" style="margin-top: 100px">
+        <label class="btn btn-default btn-file">
+            Browse <input style="display: none;" type="file" ngf-select="onFileSelect($files)" multiple>
+        </label>
 
         <div class="row" style="margin-top: 25px;">
             <div class="col-md-6">
@@ -15,10 +17,10 @@
                     <li class="list-group-item active">Componentele masinii</li>
                     <li ng-if="files.length == 0" class="list-group-item"> Nu exista nici o componenta </li>
                     <li ng-repeat="file in files " class="list-group-item " ng-class="{loading: file.hasOwnProperty( 'loading') && file.loading} " data-toggle="popover " data-placement='right' title="{{ ' {{file.name}} ' }} ">
-                        <span uib-popover-template="fileSettings.templateUrl" popover-title="{{'{{fileSettings.title}}'}}" class="classifier-settings glyphicon glyphicon-cog "> </span>
+                        <span uib-popover-template="fileSettings.templateUrl" popover-elem popover-title="{{'{{fileSettings.title}}'}}" class="classifier-settings glyphicon glyphicon-cog "> </span>
                         <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate item-loading "> </span>
                         <span uib-popover-html="getImgHtml(file)" popover-placement="right " popover-trigger="'mouseenter'"> {{ ' {{file.name}} ' }} </span>
-                        <span uib-popover-template="dynamicPopover.templateUrl" popover-title="{{'{{dynamicPopover.title}}'}}" class="badge">{{ ' {{file.classifier}} ' }}</span>
+                        <span uib-popover-template="dynamicPopover.templateUrl" popover-elem popover-title="{{'{{dynamicPopover.title}}'}}" class="badge">{{ ' {{file.classifier}} ' }}</span>
                     </li>
                 </ul>
             </div>
@@ -26,13 +28,16 @@
 
         <div class="row ">
             <div class="col-md-6 ">
-                <button ng-click="generateReports() " class="btn btn-success btn-block "> Generate reports </button>
+                <button ng-click="generateReports() " class="btn btn-success btn-block" ng-disabled="!(files.length > 0)"> Generate reports </button>
             </div>
         </div>
 
-        <div class="row ">
-            <div class="col-md-12 ">
+        <div class="row">
+            <div class="col-md-12">
                 <table class='table'>
+                    <caption>
+                        <h2> Results </h2>
+                    </caption>
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -68,11 +73,10 @@
         </script>
 
         <script type="text/javascript " src="{{ url_for( 'static', filename='bower_components/angular/angular.min.js' ) }} "></script>
-        <script type="text/javascript " src="{{ url_for( 'static', filename='ui-bootstrap-tpls-2.5.0.min.js' ) }} "></script>
+        <script type="text/javascript " src="{{ url_for( 'static', filename='js/ui-bootstrap-tpls-2.5.0.min.js' ) }} "></script>
         <script type="text/javascript " src="{{ url_for( 'static', filename='bower_components/ng-file-upload/ng-file-upload.js' ) }} "></script>
-        <script type="text/javascript " src="{{ url_for( 'static', filename='car-damage.js' )}} "></script>
-
-        <script type="text/javascript " src="{{ url_for( 'static', filename='bower_components/jquery/dist/jquery.min.js' ) }} "></script>
+        <script type="text/javascript " src="{{ url_for( 'static', filename='js/car-damage.js' )}} "></script>
+        <script type="text/javascript " src="{{ url_for( 'static', filename='js/car-damage-directives.js' )}} "></script>
     </div>
 </body>
 
