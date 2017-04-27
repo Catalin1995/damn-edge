@@ -3,10 +3,33 @@
 <head>
     <link rel='stylesheet' href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.css') }}">
     <link rel='stylesheet' href="{{ url_for('static', filename='css/car-damage.css') }}">
+    <link rel='stylesheet' href="{{ url_for('static', filename='bower_components/ng-img-crop/compile/minified/ng-img-crop.css') }}">
+
 </head>
 
 <body popover-close>
     <div ng-controller="mainController" class="container" style="margin-top: 100px">
+
+        <input class="btn btn-default" type="file" id="fileInput" />
+
+        </br>
+
+        <div class="row">
+            <div class="col-xs-6">
+                <h2> Original image </h2>
+                <div class="cropArea">
+                    <img-crop image="myImage" result-image="myCroppedImage" area-type="square"></img-crop>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <h2> Cropped Image </h2>
+                <div><img ng-src="{{'{{myCroppedImage}}'}}" /></div>
+                <button type="button" class="btn btn-default" ng-click="addCropedImgToList()"> Add copped to list </button>
+            </div>
+        </div>
+
+        </br>
+
         <label class="btn btn-default btn-file">
             Browse <input style="display: none;" type="file" ngf-select="onFileSelect($files)" multiple>
         </label>
@@ -72,11 +95,12 @@
             <button type="button" class="btn btn-xs btn-danger" ng-click="removeFile(file)"> Remove file </button>
         </script>
 
-        <script type="text/javascript " src="{{ url_for( 'static', filename='bower_components/angular/angular.min.js' ) }} "></script>
-        <script type="text/javascript " src="{{ url_for( 'static', filename='js/ui-bootstrap-tpls-2.5.0.min.js' ) }} "></script>
-        <script type="text/javascript " src="{{ url_for( 'static', filename='bower_components/ng-file-upload/ng-file-upload.js' ) }} "></script>
-        <script type="text/javascript " src="{{ url_for( 'static', filename='js/car-damage.js' )}} "></script>
-        <script type="text/javascript " src="{{ url_for( 'static', filename='js/car-damage-directives.js' )}} "></script>
+        <script type="text/javascript" src="{{ url_for( 'static', filename='bower_components/angular/angular.min.js' ) }} "></script>
+        <script type="text/javascript" src="{{ url_for( 'static', filename='js/ui-bootstrap-tpls-2.5.0.min.js' ) }} "></script>
+        <script type="text/javascript" src="{{ url_for( 'static', filename='bower_components/ng-img-crop/compile/minified/ng-img-crop.js' ) }}"></script>
+        <script type="text/javascript" src="{{ url_for( 'static', filename='bower_components/ng-file-upload/ng-file-upload.js' ) }} "></script>
+        <script type="text/javascript" src="{{ url_for( 'static', filename='js/car-damage.js' )}} "></script>
+        <script type="text/javascript" src="{{ url_for( 'static', filename='js/car-damage-directives.js' )}} "></script>
     </div>
 </body>
 

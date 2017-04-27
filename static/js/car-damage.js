@@ -1,4 +1,4 @@
-var carDamageApp = angular.module('carDamageApp', ['ngFileUpload', 'ui.bootstrap']);
+var carDamageApp = angular.module('carDamageApp', ['ngFileUpload', 'ui.bootstrap', 'ngImgCrop']);
 
 carDamageApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', function($scope, $http, Upload, $sce) {
     $scope.classifiers = [];
@@ -113,4 +113,29 @@ carDamageApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', 
         var index = $scope.files.indexOf(file);
         $scope.files.splice(index, 1);
     }
+
+    $scope.addCropedImgToList = function() {
+        // console.log($scope.myCroppedImage);
+        // var image = new Image($scope.myCroppedImage);
+        // console.log(image);
+        // $scope.$apply(function() {
+        //     $scope.files.push($scope.myCroppedImage);
+        // });
+    }
+
+    // for croping an img
+    $scope.myImage = '';
+    $scope.myCroppedImage = '';
+
+    var handleFileSelect = function(evt) {
+        var file = evt.currentTarget.files[0];
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+            $scope.$apply(function($scope) {
+                $scope.myImage = evt.target.result;
+            });
+        };
+        reader.readAsDataURL(file);
+    };
+    angular.element(document.querySelector('#fileInput')).on('change', handleFileSelect);
 }]);

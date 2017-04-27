@@ -36,3 +36,10 @@ span.classifier-settings:hover {
 span.badge:hover {
     cursor: pointer;
 }
+
+.cropArea {
+    background: #E4E4E4;
+    overflow: hidden;
+    width: 100%;
+    height: 300px;
+}
