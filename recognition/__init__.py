@@ -36,7 +36,8 @@ def label_image(image_path, classifier):
           score = predictions[0][node_id]
           result[human_string] = "%.5f" % score
 
-      return result
+  tf.reset_default_graph()  #to remove memory leak
+  return result
 
 def classifier_list():
   array = []

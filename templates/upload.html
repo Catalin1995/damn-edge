@@ -10,25 +10,49 @@
 <body popover-close>
     <div ng-controller="mainController" class="container" style="margin-top: 100px">
 
-        <input class="btn btn-default" type="file" id="fileInput" />
+        <!--<input class="btn btn-default" type="file" id="fileInput" />
 
-        </br>
+        </br>-->
 
-        <div class="row">
-            <div class="col-xs-6">
+        <!--<div class="row">-->
+        <!--<div class="col-xs-6">
                 <h2> Original image </h2>
                 <div class="cropArea">
                     <img-crop image="myImage" result-image="myCroppedImage" area-type="square"></img-crop>
                 </div>
-            </div>
-            <div class="col-xs-6">
+            </div>-->
+        <!--<div class="col-xs-6">
                 <h2> Cropped Image </h2>
                 <div><img ng-src="{{'{{myCroppedImage}}'}}" /></div>
                 <button type="button" class="btn btn-default" ng-click="addCropedImgToList()"> Add copped to list </button>
+            </div>-->
+        <!--</div>-->
+
+        <!--<label class="btn btn-default btn-file">
+            Browse an entire image <input style="display: none;" type="file" ngf-select="onFileSelect($fullFile)" multiple>
+        </label>-->
+
+        <h1> Select a full file to split in components </h1>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="btn btn-default btn-file">
+                    Browse an entire image<input style="display: none;" type="file" ngf-select="uploadFiles($file)">
+                </label>
+                <br>
+                <br>
+                <button type="button" class="btn btn-success" ng-click="splitImage()"> Click here to split the image </button>
+            </div>
+            <div class="col-md-6" ng-if="file">
+                <h3> Preview img </h3>
+                <img weight="100%" height="auto" ng-src="{{'{{file.content}}'}}" />
             </div>
         </div>
 
         </br>
+        <hr style="border-color: black;">
+
+        <h1> Add components </h1>
+
 
         <label class="btn btn-default btn-file">
             Browse <input style="display: none;" type="file" ngf-select="onFileSelect($files)" multiple>

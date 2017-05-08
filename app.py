@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify
 from werkzeug import secure_filename
 
 import recognition
+import splitter
 
 app = Flask(__name__, static_folder="static")
 
@@ -33,6 +34,26 @@ def upload_file():
     output = recognition.label_image(save_path, classifier)
     output['url'] = os.path.join('/uploads', filename)
     return jsonify(output)
+
+@app.route('/splitImage', methods = ['POST'])
+def split_image():
+    f = request.files['file']
+
+    filename = secure_filename(f.filename)
+
+    path_to_save = os.path.join('static', 'uploads', filename.split('.')[0])
+
+    if(os.path.isdir(path_to_save)):
+        return jsonify({'message': 'This img is already uploaded!'})
+
+    os.makedirs(path_to_save)
+
+    save_path = os.path.join('static', 'uploads', filename.split('.')[0], filename)
+    f.save(save_path)
+
+    path = splitter.split_image(save_path)
+
+    return jsonify({'path': path})
 
 if __name__ == '__main__':
    app.run(debug = True)

@@ -5,6 +5,7 @@ carDamageApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', 
     $scope.files = [];
     $scope.loading = false;
     $scope.Math = window.Math;
+    $scope.file = null;
 
     $scope.dynamicPopover = {
         templateUrl: 'changeClassifierTemplate.html',
@@ -36,6 +37,47 @@ carDamageApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', 
         console.log(error);
     }
 
+    $scope.uploadFiles = function(file) {
+        if (file) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                var image = new Image();
+                image.onload = function() {
+                    file.content = reader.result;
+                    $scope.$apply(function() {
+                        $scope.file = file;
+                    });
+                };
+                image.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    $scope.splitImage = function() {
+        if ($scope.file) {
+            var data = new FormData();
+            data.append('file', $scope.file);
+
+            var config = {
+                headers: { 'Content-Type': undefined }
+            }
+
+            $http.post('/splitImage', data, config).then(
+                function successCallback(response) {
+                    console.log(response);
+                },
+                function errorCallback(error) {
+                    console.log("POST splitImage request error!");
+                    console.log(error);
+                }
+            );
+        } else {
+            alert("There is no selected image! \n Please select an image.");
+        }
+    }
+
     $scope.onFileSelect = function($files) {
         angular.forEach($files, function(value) {
             value['loading'] = false;
@@ -45,7 +87,6 @@ carDamageApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', 
                 value['classifier'] = '';
             var reader = new FileReader();
 
-            var reader = new FileReader();
             reader.onload = function(e) {
                 var image = new Image();
                 image.onload = function() {
@@ -68,15 +109,15 @@ carDamageApp.controller('mainController', ['$scope', '$http', 'Upload', '$sce', 
     }
 
     function doRequest(i) {
-        var test = new FormData();
-        test.append('classifier', $scope.files[i].classifier);
-        test.append('file', $scope.files[i]);
+        var data = new FormData();
+        data.append('classifier', $scope.files[i].classifier);
+        data.append('file', $scope.files[i]);
 
         var config = {
             headers: { 'Content-Type': undefined }
         }
 
-        $http.post('/upload', test, config).then(
+        $http.post('/upload', data, config).then(
             function successCallback(response) {
                 console.log(response);
                 $scope.files[i]['result'] = response.data;
