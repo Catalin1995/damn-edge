@@ -53,6 +53,14 @@ def split_image():
 
     path = splitter.split_image(save_path)
 
+    print("Done to split the image")
+
+    # print("Start finging components")
+    # output = recognition.find_components(path)
+    # print('1111111111111111111111111111111111111111111111111111111111111')
+    # print(output)
+    # print('1111111111111111111111111111111111111111111111111111111111111')
+
     return jsonify({'path': path})
 
 if __name__ == '__main__':

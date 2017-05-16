@@ -1,0 +1,3 @@
+back car window
+back left headlight
+back right headlight
