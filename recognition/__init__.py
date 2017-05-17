@@ -20,6 +20,8 @@ def label_image(image_path, classifier):
       graph_def.ParseFromString(f.read())
       _ = tf.import_graph_def(graph_def, name='')
 
+  result = {}
+
   with tf.Session() as sess:
       # Feed the image_data as input to the graph and get first prediction
       softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
@@ -30,13 +32,14 @@ def label_image(image_path, classifier):
       # Sort to show labels of first prediction in order of confidence
       top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
 
-      result = {}
       for node_id in top_k:
           human_string = label_lines[node_id]
           score = predictions[0][node_id]
           result[human_string] = "%.5f" % score
 
-      return result
+  tf.reset_default_graph()  #to remove memory leak
+
+  return result
 
 def classifier_list():
   array = []
