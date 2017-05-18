@@ -37,7 +37,7 @@ def split_image(file_path):
     
     classifiers = [
         {   
-            'classifier': 'back_car_window',
+            'classifier': 'back car window',
             'end_x': 1,
             'end_y': 1/2,
             'start_x': 0,
@@ -49,7 +49,7 @@ def split_image(file_path):
             'filename': filename
         },
         {
-            'classifier': 'back_left_headlight',
+            'classifier': 'back left headlight',
             'end_x': 1/2,
             'end_y': 1,
             'start_x': 0,
@@ -61,7 +61,7 @@ def split_image(file_path):
             'filename': filename
         },
         {
-            'classifier': 'back_right_headlight',
+            'classifier': 'back right headlight',
             'end_x': 1,
             'end_y': 1,
             'start_x': 1/2,
@@ -74,10 +74,15 @@ def split_image(file_path):
         }
     ]
 
-    for classifier in classifiers:
-        generate_labels_for_classifier(image, path, classifier)
+    paths = []
 
-    return path
+    for classifier in classifiers:
+        paths.append({
+            'classifier': classifier['classifier'],
+            'path': generate_labels_for_classifier(image, path, classifier)
+            })
+
+    return paths
 
 def generate_labels_for_classifier(image, path, classifier):
     original_height = image.shape[0]
@@ -107,6 +112,8 @@ def generate_labels_for_classifier(image, path, classifier):
             j = j + move
         i = i + move
         j = int(original_width * classifier['start_x'])
+
+    return new_path
 
 def save_image(image, path, filename):
     a = Image.fromarray(image, "RGB")

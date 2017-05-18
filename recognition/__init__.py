@@ -23,6 +23,8 @@ def label_image(image_path, classifier):
       graph_def.ParseFromString(f.read())
       _ = tf.import_graph_def(graph_def, name='')
 
+  result = {}
+
   with tf.Session() as sess:
       # Feed the image_data as input to the graph and get first prediction
       softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
@@ -32,10 +34,7 @@ def label_image(image_path, classifier):
 
       # Sort to show labels of first prediction in order of confidence
       top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
-      print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-      print(top_k)
-      print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
-      result = {}
+
       for node_id in top_k:
           human_string = label_lines[node_id]
           score = predictions[0][node_id]
@@ -50,21 +49,22 @@ def classifier_list():
     array.append(x.split('/')[1])
   return array
 
-def find_components(images_path):
-  classifier = 'component'
+def find_components(img_paths, classifier):
   # change this as you see fit
   labels_path = "classifiers/%s/retrained_labels.txt" % classifier
   graph_path = "classifiers/%s/retrained_graph.pb" % classifier
 
   images_paths = []
-  for f in listdir(images_path):
+  for f in listdir(img_paths['path']):
         if f.endswith(('png', 'jpg', 'jpeg')):
-              images_paths.append(os.path.join(images_path, f))
+              images_paths.append(os.path.join(img_paths['path'], f))
 
-  result = { "back car window": {"score": 0, "path_to_image": ""},
-            "back left headlight": {"score": 0, "path_to_image": ""},
-            "back right headlight": {"score": 0, "path_to_image": ""}
-          }
+  result = { 
+      "back car window": 0,
+      "back left headlight": 0,
+      "back right headlight": 0,
+      "path_to_image": ""
+    }
 
   for image_path in images_paths:
     print("find for " + image_path)
@@ -91,12 +91,17 @@ def find_components(images_path):
         top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
 
         # result = {}
+
+        prev = {}
+
         for node_id in top_k:
             human_string = label_lines[node_id]
             score = predictions[0][node_id]
-            if(float(result[human_string]['score']) < float("%.5f" % score)):
-                  result[human_string]['score'] = "%.5f" % score
-                  result[human_string]['path_to_image'] = image_path
+            prev[human_string] = "%.5f" % score
+            prev['path_to_image'] = image_path
+        
+        if(float(prev[img_paths['classifier']]) > float(result[img_paths['classifier']]) ):
+            result = prev
 
     tf.reset_default_graph()  #to remove memory leak
 
