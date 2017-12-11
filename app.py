@@ -62,11 +62,11 @@ def split_image():
     for path in  paths:
         result.append(recognition.find_components(path, 'component'))  #this must to be changed automaticaly
 
+    # result.append(recognition.find_components(paths[2], 'component'))  #this must to be changed automaticaly
+
+    print('1111111111111111111111111111111111111111111111111111111111111')
     print(result)
-    # output = recognition.find_components(path)
-    # print('1111111111111111111111111111111111111111111111111111111111111')
-    # print(output)
-    # print('1111111111111111111111111111111111111111111111111111111111111')
+    print('1111111111111111111111111111111111111111111111111111111111111')
 
     return jsonify({'path': paths})
 

@@ -79,6 +79,7 @@ def split_image(file_path):
     for classifier in classifiers:
         paths.append({
             'classifier': classifier['classifier'],
+            'reverse': classifier['reverse'],
             'path': generate_labels_for_classifier(image, path, classifier)
             })
 
@@ -107,6 +108,8 @@ def generate_labels_for_classifier(image, path, classifier):
         while j + new_width_image <= end_x:
             with tf.Graph().as_default(), tf.Session() as sess:
                 cropped_image = sess.run(tf.image.crop_to_bounding_box(image, i, j, new_height_image, new_width_image))
+                if(classifier['reverse']):
+                    cropped_image = sess.run(tf.image.flip_left_right(cropped_image))
                 new_filename = classifier['filename'] + "_" + str(i) + "_" + str(j) + ".jpg"
                 save_image(cropped_image, new_path, new_filename)
             j = j + move

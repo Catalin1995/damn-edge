@@ -80,7 +80,7 @@ def find_components(img_paths, classifier):
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')
 
-    with tf.Session() as sess:
+    with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=2)) as sess:
         # Feed the image_data as input to the graph and get first prediction
         softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
 
@@ -100,7 +100,13 @@ def find_components(img_paths, classifier):
             prev[human_string] = "%.5f" % score
             prev['path_to_image'] = image_path
         
-        if(float(prev[img_paths['classifier']]) > float(result[img_paths['classifier']]) ):
+        if(img_paths['reverse']):
+          if(float(prev[img_paths['classifier']]) > float(result[img_paths['classifier'].replace('right', 'left')])):
+            result = prev
+            result[img_paths['classifier'].replace('right', 'left')] = prev[img_paths['classifier']]
+            result[img_paths['classifier']] = prev[img_paths['classifier'].replace('right', 'left')]
+        else: 
+          if(float(prev[img_paths['classifier']]) > float(result[img_paths['classifier']]) ):
             result = prev
 
     tf.reset_default_graph()  #to remove memory leak
